@@ -1,0 +1,163 @@
+#include <iostream>
+#include <cctype>
+using namespace std;
+
+// Global variables
+char board[3][3];
+char currentPlayer = 'X';
+
+// Function to display the board
+void displayBoard() {
+    cout << "\n";
+    cout << "     0   1   2\n";
+    cout << "   +---+---+---+\n";
+    for (int i = 0; i < 3; i++) {
+        cout << " " << i << " | " << board[i][0] << " | " << board[i][1] << " | " << board[i][2] << " |\n";
+        cout << "   +---+---+---+\n";
+    }
+    cout << "\n";
+}
+
+// Function to initialize the board
+void initializeBoard() {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            board[i][j] = ' ';
+        }
+    }
+    currentPlayer = 'X';
+}
+
+// Function to check if a position is valid and empty
+bool isValidMove(int row, int col) {
+    if (row < 0 || row > 2 || col < 0 || col > 2) {
+        cout << "Invalid position! Enter numbers between 0 and 2." << endl;
+        return false;
+    }
+    if (board[row][col] != ' ') {
+        cout << "Position already taken! Choose another." << endl;
+        return false;
+    }
+    return true;
+}
+
+// Function to check if the current player has won
+bool checkWin() {
+    // Check rows
+    for (int i = 0; i < 3; i++) {
+        if (board[i][0] == currentPlayer && board[i][1] == currentPlayer && board[i][2] == currentPlayer) {
+            return true;
+        }
+    }
+    
+    // Check columns
+    for (int j = 0; j < 3; j++) {
+        if (board[0][j] == currentPlayer && board[1][j] == currentPlayer && board[2][j] == currentPlayer) {
+            return true;
+        }
+    }
+    
+    // Check diagonals
+    if (board[0][0] == currentPlayer && board[1][1] == currentPlayer && board[2][2] == currentPlayer) {
+        return true;
+    }
+    if (board[0][2] == currentPlayer && board[1][1] == currentPlayer && board[2][0] == currentPlayer) {
+        return true;
+    }
+    
+    return false;
+}
+
+// Function to check if the board is full (draw)
+bool isBoardFull() {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (board[i][j] == ' ') {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+// Function to switch player
+void switchPlayer() {
+    currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+}
+
+// Main game logic
+void playGame() {
+    initializeBoard();
+    int row, col;
+    bool gameOver = false;
+    
+    cout << "========================================\n";
+    cout << "     WELCOME TO TIC-TAC-TOE GAME\n";
+    cout << "========================================\n";
+    cout << "Player X vs Player O\n";
+    cout << "Enter your move as: row column (0-2 for each)\n\n";
+    
+    while (!gameOver) {
+        displayBoard();
+        cout << "Player " << currentPlayer << "'s turn" << endl;
+        cout << "Enter row (0-2): ";
+        cin >> row;
+        cout << "Enter column (0-2): ";
+        cin >> col;
+        
+        // Validate input
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(10000, '\n');
+            cout << "Invalid input! Please enter numbers." << endl;
+            continue;
+        }
+        
+        // Check if move is valid
+        if (!isValidMove(row, col)) {
+            continue;
+        }
+        
+        // Place the move
+        board[row][col] = currentPlayer;
+        
+        // Check if current player won
+        if (checkWin()) {
+            displayBoard();
+            cout << "========================================\n";
+            cout << "   PLAYER " << currentPlayer << " WINS!\n";
+            cout << "========================================\n";
+            gameOver = true;
+        }
+        // Check if it's a draw
+        else if (isBoardFull()) {
+            displayBoard();
+            cout << "========================================\n";
+            cout << "        GAME IS A DRAW!\n";
+            cout << "========================================\n";
+            gameOver = true;
+        }
+        // Switch to next player
+        else {
+            switchPlayer();
+        }
+    }
+}
+
+int main() {
+    char playAgain;
+    
+    do {
+        playGame();
+        
+        cout << "\nDo you want to play again? (y/n): ";
+        cin >> playAgain;
+        playAgain = tolower(playAgain);
+        
+    } while (playAgain == 'y');
+    
+    cout << "\nThank you for playing Tic-Tac-Toe!" << endl;
+    cout << "========================================\n";
+    
+    return 0;
+}
